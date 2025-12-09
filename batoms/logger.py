@@ -3,7 +3,7 @@ Logger
 """
 import bpy
 import sys
-from tempfile import gettempdir
+from tempfile import NamedTemporaryFile
 from pathlib import Path
 import logging
 import os
@@ -22,9 +22,9 @@ def set_logger(version):
     formatter = "%(levelname)s " "[%(name)-10s %(funcName)-10s]: %(message)s"
     logging.basicConfig(stream=sys.stdout, format=formatter, level=logging.INFO)
     # add logger file
-    filepath = Path(gettempdir()) / ("beautiful_atoms.log")
-    root_logger.info("Log file: " + str(filepath))
-    file_handler = logging.FileHandler(filepath, mode="w")
+    logfile = NamedTemporaryFile(mode = "wt", suffix=".log", prefix="beautiful_atoms_", delete=False)
+    root_logger.info("Log file: " + str(logfile.name))
+    file_handler = logging.StreamHandler(logfile)
     file_handler.setFormatter(logging.Formatter(formatter))
     root_logger.addHandler(file_handler)
     root_logger.info("Blender version: {} ".format(bpy.app.version_string))
